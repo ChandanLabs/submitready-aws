@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SubmitReady — Application Preflight</title>
+  <style>
+    :root { font-family: Inter, system-ui, sans-serif; color: #17202a; background: #f4f6f8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    .top { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:24px; }
+    h1 { margin:0 0 6px; font-size: 30px; }
+    .sub { color:#68737d; margin:0; }
+    .badge { padding:8px 12px; border-radius:999px; background:#e8eef5; font-size:12px; font-weight:700; letter-spacing:.03em; }
+    .grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; }
+    .card { background:white; border:1px solid #dfe5ea; border-radius:16px; padding:18px; box-shadow: 0 8px 28px rgba(0,0,0,.04); }
+    .card h2 { margin:0 0 14px; font-size:18px; }
+    textarea { width:100%; min-height:460px; border:1px solid #ccd5dd; border-radius:12px; padding:14px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; resize:vertical; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+    button { border:0; border-radius:10px; padding:11px 14px; font-weight:700; cursor:pointer; }
+    .primary { background:#111827; color:white; }
+    .secondary { background:#edf1f5; color:#17202a; }
+    .summary { display:flex; align-items:center; gap:16px; padding:16px; background:#f8fafb; border-radius:14px; margin-bottom:14px; }
+    .score { font-size:34px; font-weight:800; }
+    .status { font-size:20px; font-weight:800; }
+    .hint { color:#68737d; font-size:12px; margin-top:6px; }
+    .check { border:1px solid #e0e5e9; border-radius:12px; padding:12px 14px; margin-bottom:10px; }
+    .row { display:flex; justify-content:space-between; gap:14px; align-items:center; }
+    .title { font-weight:750; }
+    .pill { font-size:11px; font-weight:800; padding:5px 8px; border-radius:999px; }
+    .pass { background:#e7f6ec; color:#146c2e; }
+    .fail { background:#fff0ee; color:#ad2d20; }
+    .warn { background:#fff7dc; color:#7d5e00; }
+    .msg { color:#52606c; font-size:13px; margin-top:8px; line-height:1.45; }
+    .evidence { background:#f8fafb; border-radius:9px; padding:8px 10px; margin-top:8px; font:12px ui-monospace, monospace; overflow:auto; }
+    @media (max-width: 900px) { .grid { grid-template-columns:1fr; } .top { flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="top">
+      <div>
+        <h1>SubmitReady</h1>
+        <p class="sub">A deterministic preflight gate for scholarship application packets.</p>
+      </div>
+      <div class="badge">DEMO POLICY · NOT A REAL SCHOLARSHIP RULE</div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Application packet</h2>
+        <textarea id="payload" spellcheck="false"></textarea>
+        <div class="actions">
+          <button class="primary" id="run">Run preflight</button>
+          <button class="secondary" id="broken">Load broken demo</button>
+          <button class="secondary" id="fixed">Load fixed demo</button>
+        </div>
+        <div class="hint">The MVP accepts extracted document text so the rules can be tested locally. A Ship It adapter can replace this with Amazon Textract.</div>
+      </section>
+
+      <section class="card">
+        <h2>Evidence report</h2>
+        <div id="report"><p class="sub">Run a check to see which defects would block submission.</p></div>
+      </section>
+    </div>
+  </main>
+
+<script>
+const payload = document.querySelector('#payload');
+const report = document.querySelector('#report');
+
+async function loadDemo(kind) {
+  const data = await fetch(`/api/demo/${kind}`).then(r => r.json());
+  payload.value = JSON.stringify(data, null, 2);
+  await run();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+async function run() {
+  try {
+    const input = JSON.parse(payload.value);
+    const res = await fetch('/api/validate', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(input) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Validation failed');
+    report.innerHTML = `
+      <div class="summary">
+        <div class="score">${data.passedCount}/${data.totalChecks}</div>
+        <div><div class="status">${data.ready ? 'READY TO SUBMIT' : 'FIXES REQUIRED'}</div><div class="hint">Generated ${new Date(data.generatedAt).toLocaleTimeString()}</div></div>
+      </div>
+      ${data.results.map(r => `
+        <div class="check">
+          <div class="row"><div class="title">${escapeHtml(r.title)}</div><div class="pill ${r.passed ? 'pass' : (r.severity === 'warning' ? 'warn' : 'fail')} ">${r.passed ? 'PASS' : (r.severity === 'warning' ? 'WARNING' : 'FIX')}</div></div>
+          <div class="msg">${escapeHtml(r.message)}</div>
+          ${r.evidence ? `<div class="evidence">${escapeHtml(JSON.stringify(r.evidence, null, 2))}</div>` : ''}
+        </div>
+      `).join('')}
+    `;
+  } catch (e) {
+    report.innerHTML = `<div class="check"><div class="title">Invalid input</div><div class="msg">${escapeHtml(e.message)}</div></div>`;
+  }
+}
+
+document.querySelector('#run').addEventListener('click', run);
+document.querySelector('#broken').addEventListener('click', () => loadDemo('broken'));
+document.querySelector('#fixed').addEventListener('click', () => loadDemo('fixed'));
+loadDemo('broken');
+</script>
+</body>
+</html>

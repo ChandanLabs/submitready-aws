@@ -1,0 +1,26 @@
+{
+  "application": {
+    "name": "Chandan Kumar Sah",
+    "dateOfBirth": "2005-05-01",
+    "annualIncome": 180000,
+    "domicileState": "Andhra Pradesh",
+    "course": "B.Tech Computer Science"
+  },
+  "documents": {
+    "identityProof": {
+      "contentType": "application/pdf",
+      "sizeBytes": 74211,
+      "text": "Name: Chandan Kumar Teli\nDate of Birth: 2005-05-01\n"
+    },
+    "incomeCertificate": {
+      "contentType": "application/pdf",
+      "sizeBytes": 120411,
+      "text": "Name: Chandan Kumar Sah Teli\nAnnual Income: ₹210,000\n"
+    },
+    "domicileCertificate": {
+      "contentType": "application/pdf",
+      "sizeBytes": 100201,
+      "text": "Name: Chandan Kumar Sah Teli\nIssued On: 2026-01-10\nValid Until: 2026-12-31\n"
+    }
+  }
+}
