@@ -1,0 +1,17 @@
+{
+  "name": "submitready",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SubmitReady - deterministic preflight checks for scholarship application packets",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "validate:demo": "node src/cli.js demo/application-broken.json",
+    "validate:fixed": "node src/cli.js demo/application-fixed.json"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sfn": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  }
+}
