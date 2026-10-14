@@ -1,64 +1,34 @@
 # SubmitReady
 
-**SubmitReady** is a pre-submission quality gate for scholarship application packets.
+SubmitReady checks scholarship application packets before submission and returns an evidence report for each check. The application uses Java 21 and Spring Boot; its browser UI and API are served by the same process.
 
-The MVP focuses on one job: **find defects before the applicant submits**.
-
-## What works now
-
-- Required-field checks
-- Required-document checks
-- Applicant name consistency check
-- Date-of-birth consistency check
-- Income consistency check
-- Certificate validity check
-- File type/size checks
-- A policy check backed by a Cedar policy file
-- Actionable pass/fix evidence report
-- Broken → fixed rerun demo
-- Local HTTP server and AWS Lambda entrypoint
-- SAM template for Ship It deployment
-
-> The included domicile policy is deliberately synthetic for the hackathon demo. It is not an official scholarship rule.
+The included domicile rule and application fixtures are synthetic demo data, not official scholarship requirements. This demo does not persist submissions. Do not submit real applicant data.
 
 ## Run locally
 
-```bash
-npm test
-npm start
-```
-
-Open `http://localhost:3000`.
-
-You can also validate the fixtures directly:
+Requirements: JDK 21 or newer and Maven 3.9 or newer.
 
 ```bash
-npm run validate:demo
-npm run validate:fixed
+mvn test
+mvn spring-boot:run
 ```
 
-## AWS path
+Open `http://localhost:8080`. Set `PORT` to override the local port.
 
-The current deployment skeleton uses **AWS SAM + Lambda + HTTP API**. For the full Ship It build, extend the adapter with:
+## API
 
-- S3 for document storage
-- Textract for document extraction
-- DynamoDB for application/report state
-- Step Functions for the multi-document verification workflow
-- CloudWatch for audit/operational visibility
-- Cognito if authenticated applicant/admin roles are added
+- `POST /api/validate` accepts an application packet as JSON and returns the eight-check report.
+- `GET /api/demo/broken` and `GET /api/demo/fixed` return the sample packets.
+- `GET /api/health` is the deployment health check.
 
-The core validation logic remains deterministic. AI is optional and should only explain a machine-detected defect, not decide eligibility.
+## Deploy on Render free tier
 
-## Demo story
+The repository includes a Docker build and Render Blueprint. In Render, create a new Blueprint instance, connect this GitHub repository, and select the branch to deploy. Render builds and tests the container from `render.yaml`; the resulting web service is public over HTTPS. The free instance may spin down while idle and take a short time to wake on its next request.
 
-1. Load the broken packet.
-2. Run preflight.
-3. Show the exact name and income mismatches.
-4. Load the fixed packet.
-5. Run again.
-6. End on `8/8 — READY TO SUBMIT`.
+The service is stateless and stores no submitted packet or report. Add authentication, durable storage, and a privacy review before using real applicant data.
 
-## Hackathon positioning
+## Demo
 
-The hackathon asks for a real problem, visible real-world impact, meaningful AWS usage, working execution, and a three-minute recorded demo. The project is intentionally narrow so the complete workflow can be shown rather than described.
+Open the home page to enter applicant details and document evidence. Select PDF or TXT files to check file type and size; the files stay in your browser. Paste the relevant document text into the evidence fields so SubmitReady can compare names, dates, and income. Use **Load ready sample** for an 8/8 result or **Load mismatch sample** to show fixable issues. Run `mvn test` for the integration tests.
+
+The domicile rule is still a synthetic demo rule, not a real scholarship policy. This public demo is not approved for real applicant documents or personal data.

@@ -3,4 +3,4 @@ node_modules/
 .env
 coverage/
 *.log
-.aws-sam/
+target/

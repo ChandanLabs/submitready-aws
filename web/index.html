@@ -3,111 +3,402 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SubmitReady — Application Preflight</title>
+  <meta name="theme-color" content="#f3f6f1" />
+  <title>SubmitReady | Scholarship pre-check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
   <style>
-    :root { font-family: Inter, system-ui, sans-serif; color: #17202a; background: #f4f6f8; }
+    :root {
+      color-scheme: light;
+      --ink: #18312b;
+      --muted: #62726b;
+      --line: #d7dfd8;
+      --paper: #ffffff;
+      --canvas: #f3f6f1;
+      --green: #176b4b;
+      --green-dark: #124b38;
+      --lime: #d7f16c;
+      --coral: #c74d35;
+      --warning: #91610a;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: var(--canvas);
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; }
-    .shell { max-width: 1180px; margin: 0 auto; padding: 28px; }
-    .top { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; margin-bottom:24px; }
-    h1 { margin:0 0 6px; font-size: 30px; }
-    .sub { color:#68737d; margin:0; }
-    .badge { padding:8px 12px; border-radius:999px; background:#e8eef5; font-size:12px; font-weight:700; letter-spacing:.03em; }
-    .grid { display:grid; grid-template-columns: 1.1fr .9fr; gap:18px; }
-    .card { background:white; border:1px solid #dfe5ea; border-radius:16px; padding:18px; box-shadow: 0 8px 28px rgba(0,0,0,.04); }
-    .card h2 { margin:0 0 14px; font-size:18px; }
-    textarea { width:100%; min-height:460px; border:1px solid #ccd5dd; border-radius:12px; padding:14px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; resize:vertical; }
-    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
-    button { border:0; border-radius:10px; padding:11px 14px; font-weight:700; cursor:pointer; }
-    .primary { background:#111827; color:white; }
-    .secondary { background:#edf1f5; color:#17202a; }
-    .summary { display:flex; align-items:center; gap:16px; padding:16px; background:#f8fafb; border-radius:14px; margin-bottom:14px; }
-    .score { font-size:34px; font-weight:800; }
-    .status { font-size:20px; font-weight:800; }
-    .hint { color:#68737d; font-size:12px; margin-top:6px; }
-    .check { border:1px solid #e0e5e9; border-radius:12px; padding:12px 14px; margin-bottom:10px; }
-    .row { display:flex; justify-content:space-between; gap:14px; align-items:center; }
-    .title { font-weight:750; }
-    .pill { font-size:11px; font-weight:800; padding:5px 8px; border-radius:999px; }
-    .pass { background:#e7f6ec; color:#146c2e; }
-    .fail { background:#fff0ee; color:#ad2d20; }
-    .warn { background:#fff7dc; color:#7d5e00; }
-    .msg { color:#52606c; font-size:13px; margin-top:8px; line-height:1.45; }
-    .evidence { background:#f8fafb; border-radius:9px; padding:8px 10px; margin-top:8px; font:12px ui-monospace, monospace; overflow:auto; }
-    @media (max-width: 900px) { .grid { grid-template-columns:1fr; } .top { flex-direction:column; } }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background-color: var(--canvas);
+      background-image: repeating-linear-gradient(135deg, transparent 0 30px, rgba(23, 107, 75, .025) 30px 31px);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1320px; margin: 0 auto; padding: 26px 34px 54px; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 700; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 9px; background: var(--green); color: white; font-size: 13px; }
+    .demo-label { color: var(--green-dark); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .intro { display: flex; align-items: end; justify-content: space-between; gap: 32px; padding: 30px 0 26px; }
+    h1 { max-width: 700px; margin: 0; font: 42px/1.08 'DM Serif Display', Georgia, serif; }
+    .intro-copy { max-width: 410px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, .75fr); align-items: start; gap: 30px; }
+    .form-panel { min-width: 0; }
+    .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 14px; }
+    h2 { margin: 0; font-size: 19px; }
+    .section-note { color: var(--muted); font-size: 12px; }
+    .form-section { padding: 22px 0; border-top: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: baseline; gap: 10px; margin-bottom: 17px; }
+    .section-number { color: var(--green); font-size: 11px; font-weight: 700; }
+    h3 { margin: 0; font-size: 15px; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px 18px; }
+    .field { display: grid; gap: 7px; min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label, .field-label { color: #344a42; font-size: 12px; font-weight: 600; }
+    input[type="text"], input[type="date"], input[type="number"], select, textarea {
+      width: 100%; min-width: 0; border: 1px solid #c8d3ca; border-radius: 5px; padding: 11px 12px; background: var(--paper); color: var(--ink); outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(23, 107, 75, .12); }
+    textarea { min-height: 87px; resize: vertical; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .help { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .document { display: grid; grid-template-columns: minmax(190px, .72fr) minmax(0, 1.28fr); align-items: start; gap: 16px; padding: 15px 0; border-top: 1px solid #e5ebe5; }
+    .document:first-of-type { border-top: 0; }
+    .document-title { margin: 0 0 5px; font-size: 13px; font-weight: 700; }
+    input[type="file"] { display: block; width: 100%; color: var(--muted); font-size: 11px; }
+    input[type="file"]::file-selector-button { margin-right: 8px; border: 1px solid var(--line); border-radius: 4px; padding: 7px 9px; background: #edf2ec; color: var(--ink); font: 600 11px 'DM Sans', sans-serif; cursor: pointer; }
+    .file-state { min-height: 14px; color: var(--green); font-size: 11px; overflow-wrap: anywhere; }
+    .privacy-note { margin: 5px 0 0; border-left: 3px solid #d5a345; padding: 9px 12px; background: #fff9e8; color: #66542f; font-size: 11px; line-height: 1.5; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 20px 0 0; border-top: 1px solid var(--line); }
+    .primary, .secondary, .text-button { min-height: 42px; border: 0; border-radius: 5px; padding: 0 15px; font-size: 12px; font-weight: 700; }
+    .primary { background: var(--green); color: white; }
+    .primary:hover { background: var(--green-dark); }
+    .primary:disabled { cursor: wait; opacity: .65; }
+    .secondary { border: 1px solid #bfcfc3; background: #e8efe8; color: var(--green-dark); }
+    .secondary:hover { background: #dbe8dc; }
+    .text-button { background: transparent; color: var(--muted); }
+    .report-panel { position: sticky; top: 18px; min-width: 0; border: 1px solid var(--line); border-radius: 7px; padding: 20px; background: var(--paper); }
+    .report-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+    .report-top h2 { font-size: 16px; }
+    .report-empty { padding: 23px 0 5px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .summary { display: flex; align-items: center; gap: 14px; padding: 17px 0; border-bottom: 1px solid var(--line); }
+    .score { color: var(--green); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .status { font-size: 14px; font-weight: 700; }
+    .generated { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .check { padding: 13px 0; border-bottom: 1px solid #e9eee9; }
+    .check:last-child { border-bottom: 0; }
+    .check-row { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+    .check-title { font-size: 12px; font-weight: 700; line-height: 1.4; }
+    .pill { flex: 0 0 auto; border-radius: 3px; padding: 4px 6px; font-size: 9px; font-weight: 700; }
+    .pass { background: #e2f3e6; color: #1b6938; }
+    .fail { background: #fce8e3; color: #a53b28; }
+    .warn { background: #fff2ce; color: var(--warning); }
+    .msg { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .evidence { margin-top: 7px; border-radius: 3px; padding: 8px; background: #f2f5f1; color: #41564c; font: 10px/1.5 ui-monospace, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .network-error { border-left: 3px solid var(--coral); padding: 10px 12px; background: #fff1ed; color: #813320; font-size: 12px; line-height: 1.5; }
+    @media (max-width: 900px) {
+      .shell { padding: 20px 22px 40px; }
+      .intro { align-items: start; flex-direction: column; gap: 12px; }
+      .workspace { grid-template-columns: 1fr; }
+      .report-panel { position: static; }
+    }
+    @media (max-width: 560px) {
+      .shell { padding: 16px 16px 32px; }
+      .masthead { align-items: start; flex-direction: column; gap: 10px; }
+      h1 { font-size: 34px; }
+      .fields, .document { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .actions { align-items: stretch; flex-direction: column; }
+      .actions button { width: 100%; }
+    }
   </style>
 </head>
 <body>
   <main class="shell">
-    <div class="top">
-      <div>
-        <h1>SubmitReady</h1>
-        <p class="sub">A deterministic preflight gate for scholarship application packets.</p>
-      </div>
-      <div class="badge">DEMO POLICY · NOT A REAL SCHOLARSHIP RULE</div>
-    </div>
+    <header class="masthead">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">SR</span> SubmitReady</div>
+      <div class="demo-label">Demo checks only · Not an official eligibility decision</div>
+    </header>
 
-    <div class="grid">
-      <section class="card">
-        <h2>Application packet</h2>
-        <textarea id="payload" spellcheck="false"></textarea>
-        <div class="actions">
-          <button class="primary" id="run">Run preflight</button>
-          <button class="secondary" id="broken">Load broken demo</button>
-          <button class="secondary" id="fixed">Load fixed demo</button>
+    <section class="intro" aria-labelledby="page-title">
+      <h1 id="page-title">Check your scholarship packet before you submit.</h1>
+      <p class="intro-copy">Enter your application details and compare them with your documents. SubmitReady flags missing items and mismatched evidence so you can review them before applying.</p>
+    </section>
+
+    <div class="workspace">
+      <form id="application-form" class="form-panel">
+        <div class="panel-heading">
+          <h2>Applicant pre-check</h2>
+          <span class="section-note">5 applicant fields + 3 documents checked</span>
         </div>
-        <div class="hint">The MVP accepts extracted document text so the rules can be tested locally. A Ship It adapter can replace this with Amazon Textract.</div>
-      </section>
 
-      <section class="card">
-        <h2>Evidence report</h2>
-        <div id="report"><p class="sub">Run a check to see which defects would block submission.</p></div>
-      </section>
+        <section class="form-section" aria-labelledby="applicant-heading">
+          <div class="section-heading"><span class="section-number">01</span><h3 id="applicant-heading">Applicant details</h3></div>
+          <div class="fields">
+            <div class="field full">
+              <label for="applicant-name">Full name as shown on identity proof</label>
+              <input id="applicant-name" name="name" type="text" autocomplete="name" placeholder="e.g. Asha Kumar" />
+            </div>
+            <div class="field">
+              <label for="date-of-birth">Date of birth</label>
+              <input id="date-of-birth" name="dateOfBirth" type="date" autocomplete="bday" />
+            </div>
+            <div class="field">
+              <label for="annual-income">Annual family income (INR)</label>
+              <input id="annual-income" name="annualIncome" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 250000" />
+            </div>
+            <div class="field">
+              <label for="domicile-state">Domicile state</label>
+              <select id="domicile-state" name="domicileState">
+                <option value="">Select a state</option>
+                <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+                <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option>
+                <option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option>
+                <option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option>
+                <option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option>
+                <option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Punjab</option>
+                <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+                <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="course">Course or program</label>
+              <input id="course" name="course" type="text" autocomplete="off" placeholder="e.g. B.Tech Computer Science" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section" aria-labelledby="documents-heading">
+          <div class="section-heading"><span class="section-number">02</span><h3 id="documents-heading">Documents and evidence</h3></div>
+          <p class="help">Choose a PDF or TXT file to check its type and size. Enter the relevant text below so the checker can compare it with your application. TXT files can be read into the evidence field automatically.</p>
+
+          <div class="document">
+            <div>
+              <p class="document-title">Identity proof</p>
+              <input id="identity-file" type="file" accept="application/pdf,text/plain,.pdf,.txt" aria-label="Choose identity proof PDF or TXT" />
+              <p class="file-state" id="identity-file-state" aria-live="polite">No file selected</p>
+            </div>
+            <div class="field">
+              <label for="identity-text">Name and date of birth shown on the document</label>
+              <textarea id="identity-text" name="identityText" placeholder="Name: Asha Kumar&#10;Date of Birth: 2005-05-01"></textarea>
+            </div>
+          </div>
+
+          <div class="document">
+            <div>
+              <p class="document-title">Income certificate</p>
+              <input id="income-file" type="file" accept="application/pdf,text/plain,.pdf,.txt" aria-label="Choose income certificate PDF or TXT" />
+              <p class="file-state" id="income-file-state" aria-live="polite">No file selected</p>
+            </div>
+            <div class="field">
+              <label for="income-text">Annual income shown on the certificate</label>
+              <textarea id="income-text" name="incomeText" placeholder="Annual Income: INR 250000"></textarea>
+            </div>
+          </div>
+
+          <div class="document">
+            <div>
+              <p class="document-title">Domicile certificate</p>
+              <input id="domicile-file" type="file" accept="application/pdf,text/plain,.pdf,.txt" aria-label="Choose domicile certificate PDF or TXT" />
+              <p class="file-state" id="domicile-file-state" aria-live="polite">No file selected</p>
+            </div>
+            <div class="field">
+              <label for="domicile-text">Issue and expiry dates shown on the certificate</label>
+              <textarea id="domicile-text" name="domicileText" placeholder="Issued On: 2026-01-10&#10;Valid Until: 2026-12-31"></textarea>
+            </div>
+          </div>
+
+          <p class="privacy-note">Demo privacy: selected file bytes stay in your browser and are not uploaded or stored. Applicant details, file type/size, and evidence text are sent to this demo service for checking. Use sample data, not real personal documents.</p>
+        </section>
+
+        <div class="actions">
+          <button class="primary" id="run" type="submit">Check readiness</button>
+          <button class="secondary" id="fixed" type="button">Load ready sample</button>
+          <button class="secondary" id="broken" type="button">Load mismatch sample</button>
+          <button class="text-button" id="clear" type="reset">Clear form</button>
+        </div>
+      </form>
+
+      <aside class="report-panel" aria-labelledby="report-heading">
+        <div class="report-top">
+          <h2 id="report-heading">Readiness report</h2>
+          <span class="section-note" id="report-state">Awaiting details</span>
+        </div>
+        <div id="report" aria-live="polite" aria-atomic="false">
+          <p class="report-empty">Complete the applicant details and document evidence, then check readiness. Your results will appear here.</p>
+        </div>
+      </aside>
     </div>
   </main>
 
 <script>
-const payload = document.querySelector('#payload');
+const form = document.querySelector('#application-form');
 const report = document.querySelector('#report');
+const reportState = document.querySelector('#report-state');
+const runButton = document.querySelector('#run');
+const documentFields = [
+  { key: 'identityProof', fileId: 'identity-file', textId: 'identity-text', stateId: 'identity-file-state' },
+  { key: 'incomeCertificate', fileId: 'income-file', textId: 'income-text', stateId: 'income-file-state' },
+  { key: 'domicileCertificate', fileId: 'domicile-file', textId: 'domicile-text', stateId: 'domicile-file-state' }
+];
+let samplePacket = null;
 
-async function loadDemo(kind) {
-  const data = await fetch(`/api/demo/${kind}`).then(r => r.json());
-  payload.value = JSON.stringify(data, null, 2);
-  await run();
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[character]));
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-}
-
-async function run() {
-  try {
-    const input = JSON.parse(payload.value);
-    const res = await fetch('/api/validate', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(input) });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Validation failed');
-    report.innerHTML = `
-      <div class="summary">
-        <div class="score">${data.passedCount}/${data.totalChecks}</div>
-        <div><div class="status">${data.ready ? 'READY TO SUBMIT' : 'FIXES REQUIRED'}</div><div class="hint">Generated ${new Date(data.generatedAt).toLocaleTimeString()}</div></div>
-      </div>
-      ${data.results.map(r => `
-        <div class="check">
-          <div class="row"><div class="title">${escapeHtml(r.title)}</div><div class="pill ${r.passed ? 'pass' : (r.severity === 'warning' ? 'warn' : 'fail')} ">${r.passed ? 'PASS' : (r.severity === 'warning' ? 'WARNING' : 'FIX')}</div></div>
-          <div class="msg">${escapeHtml(r.message)}</div>
-          ${r.evidence ? `<div class="evidence">${escapeHtml(JSON.stringify(r.evidence, null, 2))}</div>` : ''}
-        </div>
-      `).join('')}
-    `;
-  } catch (e) {
-    report.innerHTML = `<div class="check"><div class="title">Invalid input</div><div class="msg">${escapeHtml(e.message)}</div></div>`;
+function updateFileStates() {
+  for (const documentField of documentFields) {
+    const file = document.querySelector(`#${documentField.fileId}`).files[0];
+    const state = document.querySelector(`#${documentField.stateId}`);
+    const sample = samplePacket?.documents?.[documentField.key];
+    state.textContent = file
+      ? `${file.name} · ${(file.size / 1024).toFixed(1)} KB`
+      : sample ? `Sample metadata only · ${sample.contentType}, ${sample.sizeBytes} bytes`
+        : 'No file selected';
   }
 }
 
-document.querySelector('#run').addEventListener('click', run);
-document.querySelector('#broken').addEventListener('click', () => loadDemo('broken'));
+function clearSampleMode() {
+  if (samplePacket) {
+    samplePacket = null;
+    updateFileStates();
+  }
+}
+
+function buildPacket() {
+  const values = new FormData(form);
+  const income = values.get('annualIncome');
+  const packet = {
+    application: {
+      name: String(values.get('name') || '').trim(),
+      dateOfBirth: values.get('dateOfBirth') || '',
+      annualIncome: income === '' ? '' : Number(income),
+      domicileState: values.get('domicileState') || '',
+      course: String(values.get('course') || '').trim()
+    },
+    documents: {}
+  };
+
+  for (const documentField of documentFields) {
+    const file = document.querySelector(`#${documentField.fileId}`).files[0];
+    const evidenceText = document.querySelector(`#${documentField.textId}`).value.trim();
+    const sample = samplePacket?.documents?.[documentField.key];
+    if (file) {
+      packet.documents[documentField.key] = {
+        contentType: file.type || 'application/octet-stream',
+        sizeBytes: file.size,
+        text: evidenceText
+      };
+    } else if (sample) {
+      packet.documents[documentField.key] = {
+        contentType: sample.contentType,
+        sizeBytes: sample.sizeBytes,
+        text: evidenceText
+      };
+    }
+  }
+  return packet;
+}
+
+function renderReport(data) {
+  report.innerHTML = `
+    <div class="summary">
+      <div class="score">${data.passedCount}/${data.totalChecks}</div>
+      <div>
+        <div class="status">${data.ready ? 'READY TO SUBMIT' : 'FIXES REQUIRED'}</div>
+        <div class="generated">Checked ${new Date(data.generatedAt).toLocaleTimeString()}</div>
+      </div>
+    </div>
+    ${data.results.map(result => `
+      <section class="check">
+        <div class="check-row">
+          <div class="check-title">${escapeHtml(result.title)}</div>
+          <span class="pill ${result.passed ? 'pass' : result.severity === 'warning' ? 'warn' : 'fail'}">${result.passed ? 'PASS' : result.severity === 'warning' ? 'REVIEW' : 'FIX'}</span>
+        </div>
+        <p class="msg">${escapeHtml(result.message)}</p>
+        ${result.evidence ? `<div class="evidence">${escapeHtml(JSON.stringify(result.evidence, null, 2))}</div>` : ''}
+      </section>
+    `).join('')}
+    <p class="help">A passing report only reflects these demo checks. Confirm all official requirements with the scholarship provider.</p>
+  `;
+}
+
+async function checkReadiness() {
+  runButton.disabled = true;
+  runButton.textContent = 'Checking…';
+  reportState.textContent = 'Checking';
+  try {
+    const response = await fetch('/api/validate', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(buildPacket())
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Readiness check failed.');
+    renderReport(data);
+    reportState.textContent = 'Complete';
+  } catch (error) {
+    report.innerHTML = `<div class="network-error">${escapeHtml(error.message)}</div>`;
+    reportState.textContent = 'Unavailable';
+  } finally {
+    runButton.disabled = false;
+    runButton.textContent = 'Check readiness';
+  }
+}
+
+async function loadDemo(kind) {
+  reportState.textContent = 'Loading sample';
+  try {
+    const response = await fetch(`/api/demo/${kind}`);
+    if (!response.ok) throw new Error('Could not load the sample packet.');
+    samplePacket = await response.json();
+    const application = samplePacket.application;
+    form.elements.name.value = application.name || '';
+    form.elements.dateOfBirth.value = application.dateOfBirth || '';
+    form.elements.annualIncome.value = application.annualIncome ?? '';
+    form.elements.domicileState.value = application.domicileState || '';
+    form.elements.course.value = application.course || '';
+    documentFields.forEach(documentField => {
+      document.querySelector(`#${documentField.fileId}`).value = '';
+      document.querySelector(`#${documentField.textId}`).value = samplePacket.documents?.[documentField.key]?.text || '';
+    });
+    updateFileStates();
+    await checkReadiness();
+  } catch (error) {
+    report.innerHTML = `<div class="network-error">${escapeHtml(error.message)}</div>`;
+    reportState.textContent = 'Unavailable';
+  }
+}
+
+form.addEventListener('input', clearSampleMode);
+form.addEventListener('change', clearSampleMode);
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  checkReadiness();
+});
+form.addEventListener('reset', () => {
+  samplePacket = null;
+  report.innerHTML = '<p class="report-empty">Complete the applicant details and document evidence, then check readiness. Your results will appear here.</p>';
+  reportState.textContent = 'Awaiting details';
+  queueMicrotask(updateFileStates);
+});
+
+documentFields.forEach(documentField => {
+  document.querySelector(`#${documentField.fileId}`).addEventListener('change', async event => {
+    const file = event.target.files[0];
+    if (!file) return updateFileStates();
+    const textField = document.querySelector(`#${documentField.textId}`);
+    if (file.type === 'text/plain' && !textField.value.trim()) {
+      try { textField.value = await file.text(); } catch { textField.value = ''; }
+    }
+    updateFileStates();
+  });
+});
+
 document.querySelector('#fixed').addEventListener('click', () => loadDemo('fixed'));
-loadDemo('broken');
+document.querySelector('#broken').addEventListener('click', () => loadDemo('broken'));
 </script>
 </body>
 </html>
